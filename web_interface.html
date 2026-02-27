@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock MCP Server - AI 股票分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+            display: none;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .stock-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .info-item {
+            background: white;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .info-value {
+            font-size: 1.5em;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .positive {
+            color: #e74c3c;
+        }
+        
+        .negative {
+            color: #27ae60;
+        }
+        
+        .analysis-section {
+            margin-top: 20px;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
+        
+        .analysis-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .recommendation-title {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+        }
+        
+        .recommendation-action {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 12px;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        pre {
+            background: #f4f4f4;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Stock MCP Server</h1>
+            <p class="subtitle">AI 驱动的股票分析与决策系统</p>
+        </header>
+        
+        <div class="card">
+            <h2 class="card-title">🔍 股票查询</h2>
+            <div class="input-group">
+                <input type="text" id="stockCode" placeholder="输入股票代码 (如: 600519, 301396)" maxlength="6">
+                <button onclick="analyzeStock()" id="analyzeBtn">分析</button>
+            </div>
+            
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>AI 正在分析中...</p>
+            </div>
+            
+            <div id="result" class="result">
+                <!-- 结果将显示在这里 -->
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">实时股价</div>
+                <div class="feature-desc">毫秒级获取 A 股实时行情</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">多智能体分析</div>
+                <div class="feature-desc">技术+基本面+情绪+风险综合评估</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">专业指标</div>
+                <div class="feature-desc">MACD、RSI、KDJ、布林带等</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <div class="feature-title">智能抓取</div>
+                <div class="feature-desc">绕过反爬，获取全网信息</div>
+            </div>
+        </div>
+        
+        <div class="card" style="margin-top: 20px;">
+            <h2 class="card-title">📚 API 文档</h2>
+            <pre><code>POST /mcp/call
+{
+  "tool": "multi_agent_analysis",
+  "args": {
+    "symbol": "600519"
+  }
+}</code></pre>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:5001';
+        
+        async function analyzeStock() {
+            const stockCode = document.getElementById('stockCode').value.trim();
+            
+            if (!stockCode || stockCode.length !== 6) {
+                alert('请输入6位股票代码');
+                return;
+            }
+            
+            const btn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const result = document.getElementById('result');
+            
+            btn.disabled = true;
+            loading.style.display = 'block';
+            result.classList.remove('show');
+            
+            try {
+                // 并行获取股价和技术分析
+                const [priceRes, techRes] = await Promise.all([
+                    fetch(`${API_BASE}/mcp/call`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tool: 'get_stock_price',
+                            args: { symbol: stockCode, source: 'sina' }
+                        })
+                    }),
+                    fetch(`${API_BASE}/mcp/call`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            tool: 'technical_analysis',
+                            args: { symbol: stockCode }
+                        })
+                    })
+                ]);
+                
+                const priceData = await priceRes.json();
+                const techData = await techRes.json();
+                
+                displayResult(priceData.result, techData.result);
+                
+            } catch (error) {
+                result.innerHTML = `<div class="error">错误: ${error.message}</div>`;
+                result.classList.add('show');
+            } finally {
+                btn.disabled = false;
+                loading.style.display = 'none';
+            }
+        }
+        
+        function displayResult(priceData, techData) {
+            const result = document.getElementById('result');
+            
+            if (priceData.error) {
+                result.innerHTML = `<div class="error">获取数据失败: ${priceData.error}</div>`;
+                result.classList.add('show');
+                return;
+            }
+            
+            const changeClass = priceData.change >= 0 ? 'positive' : 'negative';
+            const changeSymbol = priceData.change >= 0 ? '+' : '';
+            
+            let html = `
+                <div class="stock-info">
+                    <div class="info-item">
+                        <div class="info-label">股票名称</div>
+                        <div class="info-value">${priceData.name}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">当前价格</div>
+                        <div class="info-value">¥${priceData.price.toFixed(2)}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">涨跌幅</div>
+                        <div class="info-value ${changeClass}">${changeSymbol}${priceData.change.toFixed(2)} (${changeSymbol}${priceData.change_percent.toFixed(2)}%)</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">成交量</div>
+                        <div class="info-value">${(priceData.volume / 10000).toFixed(2)}万手</div>
+                    </div>
+                </div>
+            `;
+            
+            if (techData && !techData.error) {
+                html += `
+                    <div class="analysis-section">
+                        <div class="analysis-title">📊 技术分析</div>
+                        <p><strong>建议:</strong> ${techData.recommendation || 'N/A'}</p>
+                        ${techData.indicators ? `
+                            <div style="margin-top: 12px;">
+                                <p><strong>MACD:</strong> ${techData.indicators.macd?.substring(0, 50) || 'N/A'}...</p>
+                                <p><strong>RSI:</strong> ${techData.indicators.rsi?.substring(0, 50) || 'N/A'}...</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="recommendation">
+                    <div class="recommendation-title">AI 投资建议</div>
+                    <div class="recommendation-action">${techData?.recommendation?.includes('买入') ? '买入' : techData?.recommendation?.includes('卖出') ? '卖出' : '观望'}</div>
+                    <p>基于技术指标和市场情绪的综合分析</p>
+                </div>
+            `;
+            
+            result.innerHTML = html;
+            result.classList.add('show');
+        }
+        
+        // 回车键触发分析
+        document.getElementById('stockCode').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                analyzeStock();
+            }
+        });
+    </script>
+</body>
+</html>
