@@ -14,8 +14,10 @@ from typing import List, Dict, Optional
 from multi_agent_system import multi_agent_stock_analysis
 from technical_indicators import TechnicalAnalyst
 from jina_reader import fetch_with_jina, fetch_with_fallback
+# 导入 Smart ROI 系统（借鉴 bounty-hunter-skill）
+from smart_roi_calculator import get_roi_tool, calculate_roi, analyze_batch
 
-app = FastAPI(title="Stock MCP Server Enhanced", version="3.0.0")
+app = FastAPI(title="Stock MCP Server Enhanced", version="3.1.0")
 
 # CORS 配置
 app.add_middleware(
@@ -45,7 +47,7 @@ class WebFetchRequest(BaseModel):
 # 健康检查
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "version": "3.0.0", "features": ["multi-agent", "technical-analysis", "web-fetch"]}
+    return {"status": "healthy", "version": "3.0.0", "features": ["multi-agent", "technical-analysis", "web-fetch", "smart-roi"]}
 
 # 获取工具列表
 @app.get("/mcp/tools")
@@ -97,6 +99,27 @@ async def list_tools():
             "description": "搜索股票",
             "parameters": {
                 "keyword": "搜索关键词"
+            }
+        },
+        {
+            "name": "calculate_stock_roi",
+            "description": "计算股票 Smart ROI 评分（借鉴赏金猎人 ROI 系统）",
+            "parameters": {
+                "code": "股票代码",
+                "name": "股票名称",
+                "price": "当前价格",
+                "strategy": "投资策略",
+                "expected_return": "预期收益率(如0.05表示5%)",
+                "probability": "成功概率(0-1)",
+                "risk_level": "风险等级(low/medium/high)",
+                "time_horizon": "投资周期(short/medium/long)"
+            }
+        },
+        {
+            "name": "analyze_watchlist_roi",
+            "description": "批量分析关注列表 ROI，返回按评分排序的投资建议",
+            "parameters": {
+                "watchlist": "关注列表，包含股票信息和预期参数"
             }
         }
     ]
@@ -180,6 +203,25 @@ async def call_tool(request: dict):
             result = search_stock_by_keyword(keyword)
             return {"tool": tool_name, "result": result}
         
+        elif tool_name == "calculate_stock_roi":
+            # Smart ROI 计算（借鉴 bounty-hunter-skill）
+            required_params = ["code", "name", "price", "strategy", "expected_return", "probability", "risk_level"]
+            for param in required_params:
+                if param not in args:
+                    raise HTTPException(status_code=400, detail=f"Missing required parameter: {param}")
+            
+            result = calculate_roi(**args)
+            return {"tool": tool_name, "result": result}
+        
+        elif tool_name == "analyze_watchlist_roi":
+            # 批量分析 ROI
+            watchlist = args.get("watchlist", [])
+            if not watchlist:
+                raise HTTPException(status_code=400, detail="Missing watchlist parameter")
+            
+            result = analyze_batch(watchlist)
+            return {"tool": tool_name, "result": result}
+        
         else:
             raise HTTPException(status_code=404, detail=f"Tool {tool_name} not found")
     
@@ -236,12 +278,13 @@ async def fetch_webpage(request: WebFetchRequest):
 # 启动服务器
 if __name__ == "__main__":
     import uvicorn
-    print("🚀 Stock MCP Server Enhanced v3.0.0")
+    print("🚀 Stock MCP Server Enhanced v3.1.0")
     print("=" * 60)
     print("Features:")
     print("  ✅ Multi-agent stock analysis")
     print("  ✅ Professional technical indicators")
     print("  ✅ Enhanced web fetching with Jina Reader")
     print("  ✅ Real-time stock data")
+    print("  ✅ Smart ROI Calculator (借鉴 bounty-hunter-skill)")
     print("=" * 60)
     uvicorn.run(app, host="0.0.0.0", port=5001)
