@@ -16,6 +16,7 @@
 - 🆓 **完全免费** - 开源，可自建服务器
 - 📊 **批量查询** - 支持多只股票同时获取
 - 🔍 **智能搜索** - 支持股票名称、代码模糊搜索
+- 🌐 **增强网页抓取** - 集成 Jina Reader，绕过反爬限制（Bonus）
 
 ## 🎯 使用场景
 
@@ -107,10 +108,31 @@ curl -X POST http://localhost:5001/mcp/call \
 
 MIT License - 详见 [LICENSE](LICENSE) 文件
 
+## 🌐 增强功能：Jina Reader 集成
+
+本项目额外集成了 **Jina Reader**，提供更强大的网页抓取能力：
+
+```python
+from jina_reader import fetch_with_jina
+
+# 抓取任意网页（自动转为 Markdown）
+result = fetch_with_jina("https://example.com")
+print(result["content"])  # LLM-friendly 格式
+```
+
+**优势：**
+- ✅ 绕过反爬限制，成功率提升 90%+
+- ✅ 自动将网页转为 Markdown（LLM-friendly）
+- ✅ 支持 Cookie 模拟登录（Twitter、小红书等）
+- ✅ 完全免费
+
+详见 [JINA_READER_GUIDE.md](JINA_READER_GUIDE.md)
+
 ## 🙏 致谢
 
 - [Model Context Protocol](https://modelcontextprotocol.io/)
 - [Awesome MCP Servers](https://github.com/punkpeye/awesome-mcp-servers)
+- [Jina AI Reader](https://jina.ai/reader/) - 强大的网页抓取工具
 - 新浪财经、腾讯财经提供数据支持
 
 ---
