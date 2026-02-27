@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock MCP - WebMCP 股票数据服务</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .status.connected {
+            background: #4caf50;
+            color: white;
+        }
+        .status.disconnected {
+            background: #f44336;
+            color: white;
+        }
+        .tool-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .tool-card h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .input-group {
+            margin: 10px 0;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📊 Stock MCP Server</h1>
+        <p>WebMCP 股票数据服务 - 实时 A 股行情查询</p>
+        <span id="webmcp-status" class="status disconnected">WebMCP 未连接</span>
+    </div>
+
+    <div class="info-box">
+        <strong>💡 提示：</strong>本页面支持 WebMCP 协议。请确保 Stock MCP Server 正在运行（python stock_mcp_server.py），并已在 Chrome 中启用 WebMCP 功能。
+    </div>
+
+    <!-- 工具1：获取股价 -->
+    <div class="tool-card">
+        <h3>🔍 获取股票实时价格</h3>
+        <div class="input-group">
+            <label>股票代码（如：600519、000001）</label>
+            <input type="text" id="symbol-price" placeholder="输入股票代码" value="600519">
+        </div>
+        <button onclick="getStockPrice()">查询股价</button>
+        <div id="result-price" class="result" style="display:none"></div>
+    </div>
+
+    <!-- 工具2：搜索股票 -->
+    <div class="tool-card">
+        <h3>🔎 搜索股票</h3>
+        <div class="input-group">
+            <label>关键词（如：茅台、平安、新能源）</label>
+            <input type="text" id="keyword-search" placeholder="输入关键词" value="茅台">
+        </div>
+        <button onclick="searchStock()">搜索</button>
+        <div id="result-search" class="result" style="display:none"></div>
+    </div>
+
+    <!-- 工具3：获取K线 -->
+    <div class="tool-card">
+        <h3>📈 获取K线数据</h3>
+        <div class="input-group">
+            <label>股票代码</label>
+            <input type="text" id="symbol-kline" placeholder="输入股票代码" value="600519">
+        </div>
+        <div class="input-group">
+            <label>天数</label>
+            <input type="number" id="days-kline" placeholder="天数" value="10">
+        </div>
+        <button onclick="getKline()">获取K线</button>
+        <div id="result-kline" class="result" style="display:none"></div>
+    </div>
+
+    <!-- 工具4：获取板块数据 -->
+    <div class="tool-card">
+        <h3>🏭 获取板块数据</h3>
+        <div class="input-group">
+            <label>板块名称（如：半导体、芯片、新能源汽车）</label>
+            <input type="text" id="sector-name" placeholder="输入板块名称" value="半导体">
+        </div>
+        <button onclick="getSectorData()">查询板块</button>
+        <div id="result-sector" class="result" style="display:none"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+
+        // 检查 WebMCP 状态
+        async function checkWebMCP() {
+            if ('modelContext' in navigator) {
+                document.getElementById('webmcp-status').textContent = 'WebMCP 已就绪';
+                document.getElementById('webmcp-status').className = 'status connected';
+                
+                // 注册工具到 WebMCP
+                try {
+                    await registerTools();
+                } catch (e) {
+                    console.log('WebMCP 注册失败（可能未附加标签页）:', e);
+                }
+            } else {
+                document.getElementById('webmcp-status').textContent = 'WebMCP 不可用';
+                document.getElementById('webmcp-status').className = 'status disconnected';
+            }
+        }
+
+        // 注册工具到 WebMCP
+        async function registerTools() {
+            // 获取股价工具
+            await navigator.modelContext.registerTool({
+                name: "stock_get_price",
+                description: "获取A股实时股价",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        symbol: { type: "string", description: "股票代码，如600519" }
+                    },
+                    required: ["symbol"]
+                },
+                async execute({ symbol }) {
+                    const response = await fetch(`${API_BASE}/mcp/call`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tool: "get_stock_price", args: { symbol } })
+                    });
+                    return await response.json();
+                }
+            });
+
+            // 搜索股票工具
+            await navigator.modelContext.registerTool({
+                name: "stock_search",
+                description: "搜索股票",
+                inputSchema: {
+                    type: "object",
+                    properties: {
+                        keyword: { type: "string", description: "搜索关键词" }
+                    },
+                    required: ["keyword"]
+                },
+                async execute({ keyword }) {
+                    const response = await fetch(`${API_BASE}/mcp/call`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ tool: "search_stock", args: { keyword } })
+                    });
+                    return await response.json();
+                }
+            });
+
+            console.log('✅ 工具已注册到 WebMCP');
+        }
+
+        // 获取股价
+        async function getStockPrice() {
+            const symbol = document.getElementById('symbol-price').value;
+            const resultDiv = document.getElementById('result-price');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '查询中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/mcp/call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tool: "get_stock_price", args: { symbol } })
+                });
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.classList.remove('error');
+            } catch (e) {
+                resultDiv.textContent = '错误: ' + e.message + '\n\n请确保 Stock MCP Server 正在运行 (python stock_mcp_server.py)';
+                resultDiv.classList.add('error');
+            }
+        }
+
+        // 搜索股票
+        async function searchStock() {
+            const keyword = document.getElementById('keyword-search').value;
+            const resultDiv = document.getElementById('result-search');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '搜索中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/mcp/call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tool: "search_stock", args: { keyword, limit: 10 } })
+                });
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.classList.remove('error');
+            } catch (e) {
+                resultDiv.textContent = '错误: ' + e.message;
+                resultDiv.classList.add('error');
+            }
+        }
+
+        // 获取K线
+        async function getKline() {
+            const symbol = document.getElementById('symbol-kline').value;
+            const days = parseInt(document.getElementById('days-kline').value);
+            const resultDiv = document.getElementById('result-kline');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '获取中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/mcp/call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tool: "get_stock_kline", args: { symbol, days } })
+                });
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.classList.remove('error');
+            } catch (e) {
+                resultDiv.textContent = '错误: ' + e.message;
+                resultDiv.classList.add('error');
+            }
+        }
+
+        // 获取板块数据
+        async function getSectorData() {
+            const sectorName = document.getElementById('sector-name').value;
+            const resultDiv = document.getElementById('result-sector');
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = '查询中...';
+
+            try {
+                const response = await fetch(`${API_BASE}/mcp/call`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tool: "get_sector_data", args: { sector_name: sectorName } })
+                });
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultDiv.classList.remove('error');
+            } catch (e) {
+                resultDiv.textContent = '错误: ' + e.message;
+                resultDiv.classList.add('error');
+            }
+        }
+
+        // 页面加载时检查 WebMCP
+        window.onload = checkWebMCP;
+    </script>
+</body>
+</html>
