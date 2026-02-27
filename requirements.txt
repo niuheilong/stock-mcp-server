@@ -4,3 +4,5 @@ akshare==1.15.0
 pydantic==2.6.0
 requests==2.31.0
 python-multipart==0.0.6
+# Jina Reader 集成（可选但推荐）
+yt-dlp>=2024.0.0  # 视频字幕提取
