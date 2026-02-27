@@ -49,6 +49,11 @@ logs/
 .env
 .env.local
 
+# Local deployment config (not for GitHub)
+.crontab.local
+*.local.conf
+deploy_*.sh
+
 # Test coverage
 htmlcov/
 .coverage
