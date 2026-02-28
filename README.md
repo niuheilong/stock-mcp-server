@@ -5,18 +5,25 @@
 [![MCP](https://img.shields.io/badge/MCP-Protocol-green.svg)](https://modelcontextprotocol.io/)
 
 > **全球首个 WebMCP 原生 A 股股票数据服务**
+> 
+> **🆕 v3.1.0 新增：Smart ROI 量化投资决策系统（借鉴 bounty-hunter-skill）**
 
 让 AI Agent 实时获取 A 股行情，支持新浪财经 + 腾讯财经双数据源。
+新增 Smart ROI 系统，提供量化投资决策支持。
 
 ## ✨ 特性
 
 - 🚀 **实时股价** - 毫秒级获取 A 股实时行情
+- 🎯 **Smart ROI** - 量化投资决策系统（借鉴 bounty-hunter-skill）
+- 🧠 **多智能体分析** - 技术+基本面+情绪+风险评估
+- 📈 **专业指标** - MACD/RSI/KDJ/布林带计算
 - 🔄 **双数据源** - 新浪财经 + 腾讯财经，自动故障转移
 - 🔌 **WebMCP 协议** - 下一代 AI 交互标准
 - 🆓 **完全免费** - 开源，可自建服务器
 - 📊 **批量查询** - 支持多只股票同时获取
 - 🔍 **智能搜索** - 支持股票名称、代码模糊搜索
-- 🌐 **增强网页抓取** - 集成 Jina Reader，绕过反爬限制（Bonus）
+- 🌐 **增强网页抓取** - 集成 Jina Reader，绕过反爬限制
+- 📧 **自动晨报** - Smart ROI 驱动的每日投资报告
 
 ## 🎯 使用场景
 
