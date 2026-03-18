@@ -234,10 +234,22 @@ cost_log = {
 
 ## 📦 技能管理备份
 
-### 当前技能列表
-- `self-improving-agent` - 自我进化 ✅
-- `skill-creator` - 技能创建 ✅
-- `stock-monitor` - 青龙股票监控 ✅
+### 当前技能列表（5个）
+
+#### 核心技能
+- `stock-monitor` ⭐ - 青龙股票监控（核心项目）
+- `self-improving-agent` - 自我进化
+- `skill-creator` - 技能创建
+
+#### 新安装技能（2026-03-18）
+- `agent-browser-core` - 浏览器自动化（Rust+Node.js，零Token）
+- `nano-pdf` - PDF自然语言编辑
+
+#### 已删除技能
+- ~~`openclaw-tavily-search`~~ - 需付费API Key
+- ~~`find-skills`~~ - 功能与clawhub重复
+- ~~`automation-workflows`~~ - 未使用
+- ~~`skill-vetter-1-0-0`~~ - 未使用
 
 ### 备份机制
 ```bash
@@ -249,10 +261,50 @@ ls skills/ > skills-backups/skills_backup_$(date +%Y%m%d_%H%M%S).txt
 ```
 
 ### 安装新技能流程
-1. **备份当前状态**
-2. **安装新技能** - `clawhub install <skill>`
-3. **测试验证** - 确认功能正常
-4. **如异常** - 执行回滚
+```bash
+# 1. 备份当前状态
+ls skills/ > skills-backups/skills_backup_before_<skill>_$(date +%Y%m%d_%H%M%S).txt
+
+# 2. 搜索技能
+clawhub search <keyword>
+
+# 3. 查看详情
+clawhub inspect <skill-name>
+
+# 4. 安装技能
+clawhub install <skill-name>
+
+# 5. 测试验证
+# - 阅读 SKILL.md
+# - 测试基本功能
+# - 检查是否需要配置
+
+# 6. 如异常，执行回滚
+./skills-rollback.sh skills-backups/skills_backup_xxx.txt
+```
+
+### 实战案例：安装 agent-browser-core
+```bash
+# 2026-03-18 安装记录
+# 1. 备份
+ls skills/ > skills-backups/skills_backup_before_tavily_20260318_214441.txt
+
+# 2. 搜索
+clawhub search browser
+
+# 3. 尝试安装 tavily-search（发现需付费）
+clawhub install openclaw-tavily-search
+# 结果：需要 TAVILY_API_KEY（付费）
+
+# 4. 删除，改安装 agent-browser-core
+rm -rf skills/openclaw-tavily-search
+clawhub install agent-browser-core
+# 结果：✅ 成功，零Token，功能正常
+
+# 5. 验证
+ls skills/agent-browser-core/
+cat skills/agent-browser-core/SKILL.md
+```
 
 ## 🛡️ 防卡壳机制 ⭐⭐⭐
 
