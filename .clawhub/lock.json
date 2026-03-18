@@ -15,6 +15,18 @@
       "version": "0.1.0",
       "installedAt": 1773637984819,
       "active": true
+    },
+    "openclaw-tavily-search": {
+      "version": "0.1.0",
+      "installedAt": 1773841499968
+    },
+    "agent-browser-core": {
+      "version": "1.0.1",
+      "installedAt": 1773841656500
+    },
+    "nano-pdf": {
+      "version": "1.0.0",
+      "installedAt": 1773841867051
     }
   }
 }

@@ -1,0 +1,4 @@
+openclaw-tavily-search
+self-improving-agent
+skill-creator
+stock-monitor
