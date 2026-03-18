@@ -252,6 +252,67 @@ cost_log = {
 - 清理阈值: 10MB
 - 历史问题: 24MB (曾卡壳)
 
+### 主动排查机制 ⭐⭐⭐
+
+**每次任务后自动执行**:
+```python
+任务完成 → 资源检查 → 超标? → 立即清理 → 确认释放
+              ↓否
+           正常，记录状态
+```
+
+**自动执行脚本**:
+```python
+# 每次任务后自动运行
+import gc
+import os
+import subprocess
+import requests
+
+def auto_cleanup():
+    need_cleanup = False
+    
+    # 1. 检查Python对象
+    gc.collect()
+    obj_count = len(gc.get_objects())
+    if obj_count > 10000:
+        print(f'🔴 Python对象过多: {obj_count:,}')
+        need_cleanup = True
+    
+    # 2. 检查工作区大小
+    result = subprocess.run(['du', '-sm', '.'], capture_output=True, text=True)
+    size_mb = int(result.stdout.split()[0])
+    if size_mb > 10:
+        print(f'🔴 工作区过大: {size_mb}MB')
+        need_cleanup = True
+    
+    # 3. 检查Chrome页面
+    try:
+        resp = requests.get('http://localhost:9222/json/list', timeout=2)
+        pages = len(resp.json())
+        if pages > 5:
+            print(f'🔴 Chrome页面过多: {pages}')
+            os.system('pkill -f "Chrome Canary.*9222"')
+    except:
+        pass
+    
+    # 4. 执行清理
+    if need_cleanup:
+        gc.collect()
+        print('✅ 已清理')
+    
+    return not need_cleanup
+
+# 任务后调用
+auto_cleanup()
+```
+
+**执行原则**:
+- 不等待问题发生，提前预防
+- 超标立即清理，不过夜
+- 每次任务后自动检查
+- 主动汇报状态
+
 ### 自动清理脚本
 ```bash
 # 健康检查 + 自动清理
