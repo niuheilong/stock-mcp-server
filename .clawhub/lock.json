@@ -1,25 +1,20 @@
 {
   "version": 1,
   "skills": {
-    "skill-creator": {
-      "version": "0.1.0",
-      "installedAt": 1773637984819
+    "stock-monitor": {
+      "version": "4.4.0",
+      "installedAt": 1773682162849,
+      "active": true
     },
     "self-improving-agent": {
       "version": "3.0.4",
-      "installedAt": 1773682162849
+      "installedAt": 1773682162849,
+      "active": true
     },
-    "find-skills": {
+    "skill-creator": {
       "version": "0.1.0",
-      "installedAt": 1773682165377
-    },
-    "automation-workflows": {
-      "version": "0.1.0",
-      "installedAt": 1773682167433
-    },
-    "skill-vetter-1-0-0": {
-      "version": "1.0.0",
-      "installedAt": 1773682219981
+      "installedAt": 1773637984819,
+      "active": true
     }
   }
 }
