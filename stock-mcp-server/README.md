@@ -1,9 +1,13 @@
 # 青龙 Stock MCP Server v4.4.0
 
-实时A股股票数据 + 技术分析 + 舆情情绪分析 + 资金流向分析 + 板块联动分析 + 历史回测 + 预警系统
+[![Version](https://img.shields.io/badge/version-v4.4.0--FINAL-blue.svg)](https://github.com/niuheilong/stock-mcp-server/releases/tag/v4.4.0-FINAL)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/status-已固化-brightgreen.svg)](VERSION_FINAL.md)
 
-> 🎯 **当前版本**: 基础版 (免费)  
-> 📖 [版本选择指南](docs/VERSION_GUIDE.md) | [产品规划](docs/PRODUCT_PLAN.md) | [改进方案](docs/IMPROVEMENTS.md)
+实时A股股票数据 + 技术分析 + Chrome DevTools MCP + Token优化
+
+> 🎯 **当前版本**: v4.4.0 FINAL (已固化)  
+> 📖 [版本说明](VERSION_FINAL.md) | [版本选择指南](docs/VERSION_GUIDE.md) | [Token优化](docs/TOKEN_OPTIMIZATION.md)
 
 ## 🐉 功能特性
 
