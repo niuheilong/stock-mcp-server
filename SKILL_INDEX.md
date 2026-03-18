@@ -232,6 +232,28 @@ cost_log = {
 
 **目标**: 单次分析 < 500 Token，月消耗 < 10K Token
 
+## 📦 技能管理备份
+
+### 当前技能列表
+- `self-improving-agent` - 自我进化 ✅
+- `skill-creator` - 技能创建 ✅
+- `stock-monitor` - 青龙股票监控 ✅
+
+### 备份机制
+```bash
+# 备份当前技能状态
+ls skills/ > skills-backups/skills_backup_$(date +%Y%m%d_%H%M%S).txt
+
+# 回滚技能（如需）
+./skills-rollback.sh skills-backups/skills_backup_xxx.txt
+```
+
+### 安装新技能流程
+1. **备份当前状态**
+2. **安装新技能** - `clawhub install <skill>`
+3. **测试验证** - 确认功能正常
+4. **如异常** - 执行回滚
+
 ## 🛡️ 防卡壳机制 ⭐⭐⭐
 
 ### 核心标准
