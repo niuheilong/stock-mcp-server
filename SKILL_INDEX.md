@@ -232,6 +232,87 @@ cost_log = {
 
 **目标**: 单次分析 < 500 Token，月消耗 < 10K Token
 
+## 🛡️ 防卡壳机制 ⭐⭐⭐
+
+### 核心标准
+**预防 > 治疗** - 定期清理，防止资源累积导致卡壳
+
+### 监控阈值
+| 指标 | 阈值 | 动作 |
+|-----|------|------|
+| **Python对象数** | > 10,000 | 强制垃圾回收 |
+| **浏览器页面数** | > 5个 | 关闭多余页面 |
+| **工作区大小** | > 100MB | 清理缓存/日志 |
+| **运行时间** | > 2小时 | 建议重启 |
+| **内存使用** | > 80% | 释放资源 |
+
+### 自动清理脚本
+```bash
+# 健康检查 + 自动清理
+python3 health_check.py
+
+# 手动强制清理
+python3 -c "
+import gc
+import os
+
+# 1. 垃圾回收
+gc.collect()
+
+# 2. 清理缓存
+import shutil
+for f in ['/tmp/openclaw_*', '/tmp/tmp*']:
+    import glob
+    for p in glob.glob(f):
+        try: os.remove(p) if os.path.isfile(p) else shutil.rmtree(p)
+        except: pass
+
+# 3. 报告状态
+print(f'Python对象: {len(gc.get_objects()):,}')
+print('✅ 清理完成')
+"
+
+# 关闭浏览器
+pkill -f "Chrome Canary.*9222"
+```
+
+### 定时任务建议
+```cron
+# 每30分钟检查
+*/30 * * * * cd ~/.openclaw/workspace/stock-mcp-server && python3 health_check.py >> logs/health.log 2>&1
+
+# 每2小时清理
+0 */2 * * * cd ~/.openclaw/workspace/stock-mcp-server && python3 -c "import gc; gc.collect()"
+
+# 每天凌晨备份
+0 0 * * * cd ~/.openclaw/workspace/stock-mcp-server && ./qinglong-backup.sh
+```
+
+### 卡壳应急处理
+```bash
+# 1. 立即停止所有任务
+pkill -f "python3.*server.py"
+pkill -f "Chrome Canary"
+
+# 2. 紧急备份
+cp -r ~/.openclaw/workspace ~/.openclaw/workspace.emergency.$(date +%s)
+
+# 3. 清理大文件
+find ~/.openclaw/workspace/memory -name "*.md" -size +1M -delete
+
+# 4. 重启
+openclaw restart
+```
+
+### 实战检查清单
+- [ ] Python对象 < 10,000
+- [ ] 浏览器页面 < 5个
+- [ ] 工作区 < 100MB
+- [ ] 运行时间 < 2小时
+- [ ] 内存使用 < 80%
+
+**状态**: 🟢 健康 / 🟡 警告 / 🔴 危险
+
 ## 📝 记忆重建清单
 
 每次启动后:
@@ -239,6 +320,8 @@ cost_log = {
 2. ✅ 确认 skills/ 目录状态
 3. ✅ 验证工具可用性
 4. ✅ 加载项目上下文
+5. ✅ **执行健康检查** ⭐新增
+6. ✅ **清理过期资源** ⭐新增
 
 ## 🗑️ 清理建议
 
