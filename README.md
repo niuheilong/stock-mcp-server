@@ -9,6 +9,8 @@
 
 基于 MCP (Model Context Protocol) 协议的股票数据服务，为 AI 助手提供实时、准确的 A 股市场数据。
 
+[![stock-mcp-server MCP server](https://glama.ai/mcp/servers/niuheilong/stock-mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/niuheilong/stock-mcp-server)
+
 ## ✨ 核心功能
 
 - 📊 **实时行情** - 股票实时价格、涨跌幅、成交量
