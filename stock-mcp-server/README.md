@@ -2,7 +2,10 @@
 
 [![Version](https://img.shields.io/badge/version-v4.4.0--FINAL-blue.svg)](https://github.com/niuheilong/stock-mcp-server/releases/tag/v4.4.0-FINAL)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-已固化-brightgreen.svg)](VERSION_FINAL.md)
+[![Docker](https://img.shields.io/badge/Docker-Hub-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/niuheilong/stock-mcp-server)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![MCP](https://img.shields.io/badge/MCP-Protocol-orange)](https://modelcontextprotocol.io/)
+[![Glama](https://img.shields.io/badge/Glama.ai-Listed-6366f1)](https://glama.ai/mcp/servers/@niuheilong/stock-mcp-server)
 
 实时A股股票数据 + 技术分析 + Chrome DevTools MCP + Token优化
 
@@ -35,7 +38,17 @@
 
 ## 🚀 快速开始
 
-### Docker运行
+### Docker运行（推荐）
+```bash
+# 从 Docker Hub 拉取并运行
+docker run -d \
+  --name stock-mcp-server \
+  -p 8000:8000 \
+  --restart unless-stopped \
+  niuheilong/stock-mcp-server:latest
+```
+
+或者本地构建：
 ```bash
 docker build -t qinglong-stock .
 docker run -p 8000:8000 qinglong-stock
