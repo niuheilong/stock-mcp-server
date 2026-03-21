@@ -1,0 +1,72 @@
+{
+  "$schema": "https://glama.ai/mcp/schema.json",
+  "name": "stock-mcp-server",
+  "description": "🐉 青龙 - 实时A股股票数据 MCP 服务器",
+  "version": "4.4.0",
+  "author": {
+    "name": "niuheilong",
+    "url": "https://github.com/niuheilong"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/niuheilong/stock-mcp-server"
+  },
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "stock",
+    "a-share",
+    "finance",
+    "trading",
+    "china-stock",
+    "real-time-data"
+  ],
+  "categories": [
+    "Finance",
+    "Search",
+    "Research & Data"
+  ],
+  "runtime": "python",
+  "tools": [
+    {
+      "name": "get_stock_price",
+      "description": "获取股票实时价格"
+    },
+    {
+      "name": "get_stock_kline",
+      "description": "获取K线数据"
+    },
+    {
+      "name": "get_stock_financial",
+      "description": "获取财务指标"
+    },
+    {
+      "name": "get_sector_fund_flow",
+      "description": "获取板块资金流向"
+    },
+    {
+      "name": "search_stock",
+      "description": "搜索股票"
+    }
+  ],
+  "installation": {
+    "docker": {
+      "image": "niuheilong/stock-mcp-server:latest",
+      "port": 8000
+    },
+    "python": {
+      "requirements": "requirements.txt",
+      "entry": "server.py"
+    }
+  },
+  "env": {
+    "STOCK_MCP_PORT": {
+      "description": "服务端口",
+      "default": "8000"
+    },
+    "STOCK_MCP_HOST": {
+      "description": "服务主机",
+      "default": "0.0.0.0"
+    }
+  }
+}
