@@ -1,5 +1,7 @@
-# 青龙 Stock MCP Server v4.4.0
+# 📈 青龙 Stock MCP Server v4.4.0
 
+[![GitHub stars](https://img.shields.io/github/stars/niuheilong/stock-mcp-server?style=social)](https://github.com/niuheilong/stock-mcp-server/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/niuheilong/stock-mcp-server?style=social)](https://github.com/niuheilong/stock-mcp-server/network)
 [![Version](https://img.shields.io/badge/version-v4.4.0--FINAL-blue.svg)](https://github.com/niuheilong/stock-mcp-server/releases/tag/v4.4.0-FINAL)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Hub-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/niuheilong/stock-mcp-server)
@@ -7,7 +9,8 @@
 [![MCP](https://img.shields.io/badge/MCP-Protocol-orange)](https://modelcontextprotocol.io/)
 [![Glama](https://img.shields.io/badge/Glama.ai-Listed-6366f1)](https://glama.ai/mcp/servers/@niuheilong/stock-mcp-server)
 
-实时A股股票数据 + 技术分析 + Chrome DevTools MCP + Token优化
+> ⭐ **如果这个项目对你有帮助，请点个 Star 支持一下！**  
+> 🐉 实时A股股票数据 + 技术分析 + Chrome DevTools MCP + Token优化
 
 > 🎯 **当前版本**: v4.4.0 FINAL (已固化)  
 > 📖 [版本说明](VERSION_FINAL.md) | [版本选择指南](docs/VERSION_GUIDE.md) | [Token优化](docs/TOKEN_OPTIMIZATION.md)
@@ -243,4 +246,20 @@ curl http://localhost:8000/alerts/events
 
 ## 📄 许可证
 
-MIT
+MIT License - 详见 [LICENSE](LICENSE) 文件
+
+---
+
+## ⭐ 支持我们
+
+如果 **青龙 Stock MCP Server** 对你有帮助，请给我们一个 **Star**！
+
+[![GitHub stars](https://img.shields.io/github/stars/niuheilong/stock-mcp-server?style=social)](https://github.com/niuheilong/stock-mcp-server/stargazers)
+
+你的支持是我们持续更新的动力 🙏
+
+- 🐛 有问题？提交 [Issue](https://github.com/niuheilong/stock-mcp-server/issues)
+- 💡 有建议？欢迎 [PR](https://github.com/niuheilong/stock-mcp-server/pulls)
+- 📢 分享给需要的朋友
+
+**🐉 青龙 - 让 AI 更懂中国股市**
