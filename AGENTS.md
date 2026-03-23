@@ -12,9 +12,11 @@ Before doing anything else:
 
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
-3. Read `SKILL_INDEX.md` — 重建技能记忆 ⭐新增
-4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-5. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+3. Read `WORKFLOWS.md` — 标准操作流程（股票分析等）⭐新增
+4. Read `SKILL_INDEX.md` — 重建技能记忆 ⭐新增
+5. Read `HEARTBEAT.md` — 系统健康监控和防卡壳规则 ⭐新增
+6. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
+7. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
 
 Don't ask permission. Just do it.
 
@@ -117,6 +119,33 @@ Reactions are lightweight social signals. Humans use them constantly — they sa
 ## Tools
 
 Skills provide your tools. When you need one, check its `SKILL.md`. Keep local notes (camera names, SSH details, voice preferences) in `TOOLS.md`.
+
+### 🌐 Web Search & Data Fetching Priority ⭐⭐⭐
+
+**当需要搜索网页或获取信息时，按以下优先级选择工具：**
+
+| 优先级 | 工具 | 适用场景 | 原因 |
+|-------|------|---------|------|
+| **1** | **Chrome MCP** | 实时搜索、动态网页、需要交互的页面 | ✅ 零Token消耗，功能最全，已验证可用 |
+| **2** | **web_fetch** | 静态页面、已知URL的内容提取 | ✅ 简单快速，无需浏览器 |
+| **3** | **web_search** | 需要搜索引擎聚合结果 | ⚠️ 需要API key，可能不可用 |
+
+**决策流程：**
+```
+需要搜索/抓取?
+    ↓
+Chrome MCP 可用? → 使用 Chrome MCP (优先)
+    ↓ 否
+web_fetch 适用? → 使用 web_fetch
+    ↓ 否
+使用 web_search (最后选择)
+```
+
+**记忆点：**
+- Chrome MCP 已配置并验证可用（端口9222）
+- 不要先尝试 web_search（经常需要API key失败）
+- 不要先尝试 web_fetch（无法处理动态内容）
+- **直接先用 Chrome MCP！**
 
 **🎭 Voice Storytelling:** If you have `sag` (ElevenLabs TTS), use voice for stories, movie summaries, and "storytime" moments! Way more engaging than walls of text. Surprise people with funny voices.
 
