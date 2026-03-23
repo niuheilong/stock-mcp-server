@@ -1,29 +1,37 @@
-# 📈 青龙 Stock MCP Server v4.4.0
+# 📈 青龙 Stock MCP Server v4.5.0
 
 [![GitHub stars](https://img.shields.io/github/stars/niuheilong/stock-mcp-server?style=social)](https://github.com/niuheilong/stock-mcp-server/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/niuheilong/stock-mcp-server?style=social)](https://github.com/niuheilong/stock-mcp-server/network)
-[![Version](https://img.shields.io/badge/version-v4.4.0--FINAL-blue.svg)](https://github.com/niuheilong/stock-mcp-server/releases/tag/v4.4.0-FINAL)
+[![Version](https://img.shields.io/badge/version-v4.5.0-blue.svg)](https://github.com/niuheilong/stock-mcp-server/releases/tag/v4.5.0)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/Docker-Hub-2496ED?logo=docker&logoColor=white)](https://hub.docker.com/r/niuheilong/stock-mcp-server)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![MCP](https://img.shields.io/badge/MCP-Protocol-orange)](https://modelcontextprotocol.io/)
 [![Glama](https://img.shields.io/badge/Glama.ai-Listed-6366f1)](https://glama.ai/mcp/servers/@niuheilong/stock-mcp-server)
+[![Chrome MCP](https://img.shields.io/badge/Chrome%20MCP-Integrated-4285F4?logo=google-chrome&logoColor=white)](docs/CHROME_MCP.md)
 
 > ⭐ **如果这个项目对你有帮助，请点个 Star 支持一下！**  
-> 🐉 实时A股股票数据 + 技术分析 + Chrome DevTools MCP + Token优化
+> 🐉 实时A股股票数据 + **Chrome MCP 自动抓取** + 多源数据融合 + Token优化
 
-> 🎯 **当前版本**: v4.4.0 FINAL (已固化)  
-> 📖 [版本说明](VERSION_FINAL.md) | [版本选择指南](docs/VERSION_GUIDE.md) | [Token优化](docs/TOKEN_OPTIMIZATION.md)
+> 🎯 **当前版本**: v4.5.0 - Chrome MCP 集成版 ⭐**重大更新**  
+> 📖 [版本说明](VERSION_FINAL.md) | [Chrome MCP 文档](docs/CHROME_MCP.md) | [Token优化](docs/TOKEN_OPTIMIZATION.md)
 
 ## 🐉 功能特性
 
+### 🚀 v4.5.0 新特性 - Chrome MCP 集成
+- ✅ **Chrome MCP 自动抓取** - 自动启动 Chrome，零配置使用
+- ✅ **多源数据融合** - 腾讯 API + Chrome MCP + 本地缓存三重保障
+- ✅ **智能数据验证** - 多源交叉验证，确保数据准确性
+- ✅ **零 Token 消耗** - Chrome MCP 直接抓取，不消耗 LLM Token
+
+### 📊 核心功能
 - ✅ **实时行情** - 腾讯财经API实时数据
 - ✅ **技术分析** - MACD / KDJ / RSI / 均线趋势
 - ✅ **舆情情绪分析** - 新闻情绪 + 社交媒体情绪 + 成交量情绪
 - ✅ **资金流向分析** - 主力/散户/北向资金/大单动向
 - ✅ **板块联动分析** - 板块热度 + 龙头识别 + 个股联动
 - ✅ **历史回测** - 数据存储 + 胜率统计 + 评分验证
-- ✅ **预警系统** - 价格/情绪/资金流向/板块异动预警 ⭐新增
+- ✅ **预警系统** - 价格/情绪/资金流向/板块异动预警
 - ✅ **青龙评分** - 综合多维度智能评分 (0-100)
 - ✅ **自选股监控** - 7只核心股票持续跟踪
 
