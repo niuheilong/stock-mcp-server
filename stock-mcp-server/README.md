@@ -16,13 +16,93 @@
 > 🎯 **当前版本**: v4.5.0 - Chrome MCP 集成版 ⭐**重大更新**  
 > 📖 [版本说明](VERSION_FINAL.md) | [Chrome MCP 文档](docs/CHROME_MCP.md) | [Token优化](docs/TOKEN_OPTIMIZATION.md)
 
+## 🚀 快速开始
+
+<details open>
+<summary><b>📦 Docker 一键部署（推荐）</b></summary>
+
+```bash
+docker run -d \
+  --name stock-mcp-server \
+  -p 8000:8000 \
+  --restart unless-stopped \
+  niuheilong/stock-mcp-server:latest
+```
+
+</details>
+
+<details>
+<summary><b>🔧 本地运行</b></summary>
+
+```bash
+# 克隆仓库
+git clone https://github.com/niuheilong/stock-mcp-server.git
+cd stock-mcp-server
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 启动服务
+python server.py
+```
+
+</details>
+
+<details>
+<summary><b>🔌 接入 Claude/Cursor</b></summary>
+
+**Claude Desktop 配置：**
+编辑 `~/Library/Application Support/Claude/claude_desktop_config.json`：
+```json
+{
+  "mcpServers": {
+    "stock": {
+      "command": "docker",
+      "args": [
+        "run", "-i", "--rm",
+        "-p", "8000:8000",
+        "niuheilong/stock-mcp-server:latest"
+      ]
+    }
+  }
+}
+```
+
+**Cursor 配置：**
+在 Cursor Settings > MCP 中添加：
+```
+Name: stock
+Type: stdio
+Command: docker run -i --rm -p 8000:8000 niuheilong/stock-mcp-server:latest
+```
+
+</details>
+
+---
+
 ## 🐉 功能特性
 
-### 🚀 v4.5.0 新特性 - Chrome MCP 集成
+### 🚀 v4.5.0 新特性 - Chrome MCP 集成 ⭐⭐⭐
 - ✅ **Chrome MCP 自动抓取** - 自动启动 Chrome，零配置使用
 - ✅ **多源数据融合** - 腾讯 API + Chrome MCP + 本地缓存三重保障
 - ✅ **智能数据验证** - 多源交叉验证，确保数据准确性
 - ✅ **零 Token 消耗** - Chrome MCP 直接抓取，不消耗 LLM Token
+
+### 🔥 特色功能
+
+#### 📰 Jina Reader 集成
+> 智能网页内容提取，支持新闻、公告、研报自动解析
+- 自动提取网页正文内容
+- 支持多语言翻译
+- 智能摘要生成
+- [查看文档](JINA_READER_GUIDE.md)
+
+#### 💰 Smart ROI 计算器
+> 智能投资回报率分析，多维度收益评估
+- 支持多种投资策略回测
+- 风险调整收益计算
+- 可视化收益曲线
+- [查看文档](SMART_ROI_GUIDE.md)
 
 ### 📊 核心功能
 - ✅ **实时行情** - 腾讯财经API实时数据
@@ -46,30 +126,6 @@
 | sz002261 | 拓维信息 | 深证 |
 | sz300428 | 立中集团 | 创业板 |
 | sh688629 | 华丰科技 | 科创板 |
-
-## 🚀 快速开始
-
-### Docker运行（推荐）
-```bash
-# 从 Docker Hub 拉取并运行
-docker run -d \
-  --name stock-mcp-server \
-  -p 8000:8000 \
-  --restart unless-stopped \
-  niuheilong/stock-mcp-server:latest
-```
-
-或者本地构建：
-```bash
-docker build -t qinglong-stock .
-docker run -p 8000:8000 qinglong-stock
-```
-
-### 本地运行
-```bash
-pip install -r requirements.txt
-python server.py
-```
 
 ## 📡 API接口
 
