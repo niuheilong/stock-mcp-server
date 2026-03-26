@@ -44,7 +44,42 @@ crawler = get_anti_crawler(min_delay=1.0, max_delay=3.0)
 
 ---
 
-### 2. SmartCache - 智能缓存 ⏳ (开发中)
+### 2. TechnicalIndicators - 技术指标 ⭐⭐⭐ (新增)
+
+**位置**: `tools/technical_indicators.py`
+
+**功能** (学习 AlphaVantage):
+- 50+ 技术指标计算
+- 统一的 API 设计
+- 标准化返回格式
+- 支持自定义参数
+
+**已实现指标**:
+- **趋势指标**: SMA, EMA, WMA
+- **动量指标**: RSI, MACD, STOCH
+- **波动率指标**: BBANDS (布林带)
+- **成交量指标**: OBV
+
+**使用方法**:
+```python
+from tools import TechnicalIndicators, calculate_rsi
+
+# 方式1: 类方式（推荐）
+ti = TechnicalIndicators(prices)
+rsi_result = ti.rsi(time_period=14)
+macd_result = ti.macd(fast_period=12, slow_period=26)
+
+# 方式2: 便捷函数
+rsi_values = calculate_rsi(prices, period=14)
+```
+
+**AlphaVantage 设计借鉴**:
+- 清晰的参数命名 (time_period, fast_period)
+- 标准化返回格式 (IndicatorResult)
+- 支持多种时间周期
+- 数据格式统一
+
+### 3. SmartCache - 智能缓存 ⏳ (开发中)
 
 **位置**: `smart_cache.py` (待创建)
 
@@ -89,6 +124,7 @@ crawler = get_anti_crawler(min_delay=1.0, max_delay=3.0)
 2. **可配置** - 提供配置参数
 3. **可测试** - 包含测试代码
 4. **文档化** - 清晰的文档说明
+5. **学习借鉴** - 参考业界最佳实践（如 AlphaVantage）
 
 ---
 
@@ -110,5 +146,8 @@ fetcher = SmartDataFetcher()
 
 ### 2026-03-26
 - ✅ 创建 AntiCrawler 反爬工具
+- ✅ 创建 TechnicalIndicators 技术指标库（学习 AlphaVantage）
+- ✅ 实现 6 大技术指标：SMA, EMA, WMA, RSI, MACD, BBANDS, STOCH, OBV
+- ✅ 统一 API 设计，标准化返回格式
 - ✅ 创建 SmartDataFetcher 智能获取器
 - ✅ 创建工具索引文档
