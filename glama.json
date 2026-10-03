@@ -5,7 +5,7 @@
   ],
   "name": "stock-mcp-server",
   "description": "🐉 青龙 - 实时A股股票数据 MCP 服务器（新浪/腾讯行情，stdio）",
-  "version": "4.4.1",
+  "version": "4.5.0",
   "author": {
     "name": "niuheilong",
     "url": "https://github.com/niuheilong"
@@ -33,16 +33,28 @@
   "transport": "stdio",
   "tools": [
     {
-      "name": "get_stock_price",
-      "description": "获取单只 A 股股票实时行情"
+      "name": "get_stock_quote",
+      "description": "获取单只 A 股股票实时行情（新浪/腾讯自动回退）"
     },
     {
-      "name": "get_stock_batch",
+      "name": "get_stock_quotes",
       "description": "批量获取多只 A 股股票实时行情"
     },
     {
-      "name": "get_stock_quote_from_qq",
-      "description": "从腾讯财经获取实时行情（备用通道）"
+      "name": "get_stock_history",
+      "description": "获取历史 K 线数据（日K/周K/月K，前复权）"
+    },
+    {
+      "name": "get_stock_fundamentals",
+      "description": "获取估值与基本面指标（PE、PB、市值、换手率等）"
+    },
+    {
+      "name": "get_market_index",
+      "description": "获取大盘指数行情（上证/深证/创业板/沪深300）"
+    },
+    {
+      "name": "search_stock",
+      "description": "按名称/代码/拼音搜索 A 股股票"
     }
   ],
   "installation": {
