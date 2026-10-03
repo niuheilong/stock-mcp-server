@@ -23,6 +23,8 @@ from mcp.server.mcpserver import MCPServer
 from sina_stock_api import get_sina_stock_price, get_sina_stock_batch
 from qq_stock_api import get_qq_stock_price
 
+import usage_log
+
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 mcp = MCPServer("stock-mcp-server")
@@ -105,6 +107,7 @@ def get_stock_quote(symbol: str, source: str = "auto") -> Dict[str, Any]:
         symbol: 股票代码，如 "600519"（贵州茅台）、"000001"（平安银行）。
         source: 数据源，"auto"（默认，自动回退）| "sina" | "tencent"。
     """
+    usage_log.record("get_stock_quote")
     symbol = (symbol or "").strip()
     if not symbol:
         return {"error": "请提供股票代码，例如 600519"}
@@ -132,6 +135,7 @@ def get_stock_quotes(symbols: str) -> Dict[str, Any]:
     Args:
         symbols: 逗号分隔的股票代码，如 "600519,000001,000858"。中英文逗号均可。
     """
+    usage_log.record("get_stock_quotes")
     codes = _split_codes(symbols)
     if not codes:
         return {"error": "请提供至少一个股票代码，例如 600519,000001"}
@@ -147,6 +151,7 @@ def get_stock_history(symbol: str, period: str = "daily", count: int = 30) -> Di
         period: 周期，"daily"（日K，默认）| "weekly"（周K）| "monthly"（月K）。
         count: 返回的 K 线根数，默认 30，最大 320。
     """
+    usage_log.record("get_stock_history")
     symbol = (symbol or "").strip()
     if not symbol:
         return {"error": "请提供股票代码，例如 600519"}
@@ -207,6 +212,7 @@ def get_stock_fundamentals(symbol: str) -> Dict[str, Any]:
     Args:
         symbol: 股票代码，如 "600519"。
     """
+    usage_log.record("get_stock_fundamentals")
     symbol = (symbol or "").strip()
     if not symbol:
         return {"error": "请提供股票代码，例如 600519"}
@@ -243,6 +249,7 @@ def get_market_index(codes: str = "") -> Dict[str, Any]:
         codes: 可选，逗号分隔的指数代码，如 "sh000001,sz399001"。
                留空则返回上证指数 / 深证成指 / 创业板指 / 沪深300。
     """
+    usage_log.record("get_market_index")
     code_list = _split_codes(codes) or ["sh000001", "sz399001", "sz399006", "sh000300"]
     secs = [c if c[:2] in ("sh", "sz") else _market_symbol(c) for c in code_list]
 
@@ -289,6 +296,7 @@ def search_stock(keyword: str) -> Dict[str, Any]:
     Args:
         keyword: 搜索词，如 "茅台"、"600519"、"PAYH"（平安银行拼音首字母）。
     """
+    usage_log.record("search_stock")
     keyword = (keyword or "").strip()
     if not keyword:
         return {"error": "请提供搜索关键字，例如 茅台"}
@@ -326,6 +334,19 @@ def search_stock(keyword: str) -> Dict[str, Any]:
             break
 
     return {"keyword": keyword, "count": len(results), "results": results}
+
+
+@mcp.tool()
+def get_usage_stats(days: int = 7) -> Dict[str, Any]:
+    """获取本 MCP 服务器的工具调用统计（本地记录）。
+
+    返回最近 N 天的调用总数、错误数、各工具调用次数、按天分布。
+    统计只覆盖有写入日志文件的实例；日志路径可用环境变量 STOCK_MCP_USAGE_LOG 指定。
+
+    Args:
+        days: 统计最近多少天，默认 7，最大 365。
+    """
+    return usage_log.summary(max(1, min(int(days or 7), 365)))
 
 
 if __name__ == "__main__":

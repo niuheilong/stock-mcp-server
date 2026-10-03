@@ -5,7 +5,7 @@
   ],
   "name": "stock-mcp-server",
   "description": "🐉 青龙 - 实时A股股票数据 MCP 服务器（新浪/腾讯行情，stdio）",
-  "version": "4.5.0",
+  "version": "4.5.1",
   "author": {
     "name": "niuheilong",
     "url": "https://github.com/niuheilong"
@@ -55,6 +55,10 @@
     {
       "name": "search_stock",
       "description": "按名称/代码/拼音搜索 A 股股票"
+    },
+    {
+      "name": "get_usage_stats",
+      "description": "获取本服务器的工具调用统计（本地记录）"
     }
   ],
   "installation": {
