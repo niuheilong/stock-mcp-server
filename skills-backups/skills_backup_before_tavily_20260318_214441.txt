@@ -1,3 +1,0 @@
-self-improving-agent
-skill-creator
-stock-monitor

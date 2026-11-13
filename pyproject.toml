@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qinglong-mcp"
+version = "5.0.0"
+description = "Real-time mainland China A-share market data MCP server for AI agents"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "niuheilong" }]
+keywords = ["mcp", "a-share", "china-stock", "finance", "market-data"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+]
+dependencies = [
+  "mcp>=1.2.0,<2.0.0",
+  "requests>=2.31.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/niuheilong/stock-mcp-server"
+Repository = "https://github.com/niuheilong/stock-mcp-server"
+
+[project.scripts]
+qinglong-mcp = "qinglong.server:main"
+
+[tool.setuptools.packages.find]
+include = ["qinglong*"]

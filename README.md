@@ -1,179 +1,146 @@
-# 📈 Stock MCP Server - 青龙
+# 🐉 Qinglong — Real-time A-share data MCP server
 
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://hub.docker.com/r/niuheilong/stock-mcp-server)
-[![Python](https://img.shields.io/badge/python-3.11-green.svg)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.10+-green.svg)](https://www.python.org/)
+[![MCP](https://img.shields.io/badge/MCP-compatible-orange.svg)](https://modelcontextprotocol.io/)
 
-> 🐉 **青龙** - 实时A股股票数据 MCP 服务器
+Give any MCP-capable AI agent — Claude Code, Cursor, Codex CLI, VS Code, Windsurf,
+Cline, Zed — live access to mainland China A-share market data.
 
-基于 MCP (Model Context Protocol) 协议的股票数据服务，为 AI 助手提供实时、准确的 A 股市场数据。
+**Chinese version below · [中文说明](#中文说明)**
 
-## ✨ 核心功能
+## What it does
 
-- 📊 **实时行情** - 股票实时价格、涨跌幅、成交量
-- 📈 **K线数据** - 日K、周K、月K历史数据
-- 💰 **财务指标** - PE、PB、市值、营收等关键指标
-- 🏢 **板块资金** - 行业资金流向、龙头股追踪
-- 🔍 **智能搜索** - 股票代码、名称模糊搜索
-- 🎯 **数据验证** - 多源数据交叉验证，确保准确性
+| Tool | Returns |
+|---|---|
+| `get_stock_quote` | Real-time snapshot: price, change %, high/low, volume, amount, turnover, PE, PB, market cap, limit-up/down |
+| `get_stock_quotes` | Snapshots for up to 50 tickers in one call |
+| `get_stock_kline` | Daily / weekly / monthly OHLCV bars, forward- or backward-adjusted, 1–320 bars |
+| `search_stock` | Look up tickers by code, Chinese name or pinyin initials (`平安`, `600519`, `payh`) |
+| `get_market_indices` | SSE Composite, SZSE Component, ChiNext, STAR 50, CSI 300 |
+| `check_data_source` | Upstream reachability / latency check |
 
-## 🚀 快速开始
+Data comes from Tencent Finance's public quote endpoints, delayed by seconds. There is
+**no fabricated data**: if an upstream call fails, the tool returns an error instead of
+inventing numbers.
 
-### Docker 部署（推荐）
+## Install
+
+Requirements: Python 3.10+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-docker run -d \
-  --name stock-mcp-server \
-  -p 8000:8000 \
-  --restart unless-stopped \
-  niuheilong/stock-mcp-server:latest
+# run straight from GitHub, no checkout needed
+uvx --from git+https://github.com/niuheilong/stock-mcp-server qinglong-mcp
 ```
 
-### 本地运行
+Or install locally:
 
 ```bash
-# 克隆仓库
 git clone https://github.com/niuheilong/stock-mcp-server.git
 cd stock-mcp-server
-
-# 安装依赖
-pip install -r requirements.txt
-
-# 启动服务
-python main.py
+uv sync          # or: pip install -e .
+qinglong-mcp
 ```
 
-## 📡 MCP 工具列表
+## Connect your agent
 
-| 工具名称 | 功能描述 | 示例 |
-|---------|---------|------|
-| `get_stock_price` | 获取股票实时价格 | `000001` (平安银行) |
-| `get_stock_kline` | 获取K线数据 | `000001`, `day`, `30` |
-| `get_stock_financial` | 获取财务指标 | `000001` |
-| `get_sector_fund_flow` | 获取板块资金流向 | `industry` |
-| `search_stock` | 搜索股票 | `平安` |
+### Claude Code
 
-## 🔌 接入 Claude/Cursor
+```bash
+claude mcp add qinglong -- uvx --from git+https://github.com/niuheilong/stock-mcp-server qinglong-mcp
+```
 
-### Claude Desktop 配置
-
-编辑 `~/Library/Application Support/Claude/claude_desktop_config.json`:
+### Cursor / Windsurf / Cline / VS Code (`.mcp.json` or MCP settings)
 
 ```json
 {
   "mcpServers": {
-    "stock": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-p", "8000:8000",
-        "niuheilong/stock-mcp-server:latest"
-      ]
+    "qinglong": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/niuheilong/stock-mcp-server", "qinglong-mcp"]
     }
   }
 }
 ```
 
-### Cursor 配置
+### Claude Desktop (`claude_desktop_config.json`)
 
-在 Cursor Settings > MCP 中添加：
-
-```
-Name: stock
-Type: stdio
-Command: docker run -i --rm -p 8000:8000 niuheilong/stock-mcp-server:latest
-```
-
-## 💡 使用示例
-
-**查询股票实时数据：**
-```
-用户：分析一下贵州茅台
-AI：我来获取贵州茅台(600519)的实时数据...
-
-当前价格：1,680.00 元
-涨跌幅：+2.35% (+38.50元)
-成交量：12.5万手
-成交额：21.0亿元
-PE(TTM)：28.5
-总市值：2.11万亿
+```json
+{
+  "mcpServers": {
+    "qinglong": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/niuheilong/stock-mcp-server", "qinglong-mcp"]
+    }
+  }
+}
 ```
 
-**查询板块资金流向：**
-```
-用户：今天哪些板块资金流入最多？
-AI：我来查询今日板块资金流向...
+### HTTP mode (shared server)
 
-1. 半导体：+45.2亿 💰
-2. 新能源：+38.7亿 💰
-3. 医药生物：+22.1亿 💰
+```bash
+docker build -t qinglong-mcp .
+docker run -p 8000:8000 qinglong-mcp
+# endpoint: http://localhost:8000/mcp
 ```
 
-## 🏗️ 架构设计
+## Example
+
+> **User:** How is Kweichow Moutai doing today?
 
 ```
-┌─────────────────┐
-│   MCP Client    │  <- Claude/Cursor/其他AI
-│  (AI Assistant) │
-└────────┬────────┘
-         │ MCP Protocol
-         ▼
-┌─────────────────┐
-│  Stock MCP      │  <- 本服务
-│  Server         │
-└────────┬────────┘
-         │ HTTP/WebSocket
-         ▼
-┌─────────────────┐
-│  Data Sources   │  <- 腾讯/东方财富/新浪
-│  (Multi-Source) │     多源数据交叉验证
-└─────────────────┘
+get_stock_quote("600519")
+→ price 1,680.00 CNY, +2.35% (+38.50), high 1,692.00, low 1,641.10
+  volume 125,000 lots, amount 2.10B CNY, turnover 0.42%
+  PE(TTM) 28.5, PB 8.1, market cap 21,100亿 CNY
 ```
 
-## 🎯 数据准确性保障
+> **User:** Show me the last 5 trading days for 华胜天成.
 
-- ✅ **多源验证** - 同时从腾讯、东方财富、新浪获取数据
-- ✅ **实时更新** - 交易时间实时同步交易所数据
-- ✅ **异常检测** - 自动识别并剔除异常数据
-- ✅ **缓存策略** - 合理缓存，平衡实时性与稳定性
+```
+get_stock_kline("600410", period="day", count=5)
+→ 2026-11-13  open 13.40  close 14.30  high 14.30  low 12.88  volume 1,789,255 lots
+  ...
+```
 
-## 📝 更新日志
+## Ticker formats
 
-### v1.0.0 (2026-03-19)
-- 🎉 首次发布
-- ✅ 支持实时股票数据查询
-- ✅ 支持K线数据获取
-- ✅ 支持财务指标查询
-- ✅ 支持板块资金流向
-- ✅ Docker 一键部署
+All of these are accepted: `600410`, `sh600410`, `600410.SH`.
+Shanghai starts with 6, Shenzhen with 0/2/3, Beijing with 4/8.
 
-## 🤝 贡献指南
+## Data source & limitations
 
-欢迎提交 Issue 和 PR！
+- Source: `qt.gtimg.cn` and `web.ifzq.gtimg.cn` (Tencent Finance), public endpoints.
+- Quotes are real-time-ish but not exchange-grade; treat them as research data.
+- Beijing Stock Exchange coverage depends on the upstream endpoint.
+- Not affiliated with Tencent. For research and educational use only.
+- **This is not investment advice.**
 
-1. Fork 本仓库
-2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 创建 Pull Request
+## Development
 
-## 📄 许可证
+```bash
+uv sync
+uv run python -c "from qinglong import api; print(api.get_quote('600519'))"
+uv run python -m qinglong.server          # stdio
+uv run python -m qinglong.server --transport http --port 8000
+```
 
-MIT License - 详见 [LICENSE](LICENSE) 文件
+## License
 
-## 🙏 鸣谢
-
-- [MCP Protocol](https://modelcontextprotocol.io/) - 模型上下文协议
-- [FastAPI](https://fastapi.tiangolo.com/) - 高性能Web框架
-- [Docker](https://www.docker.com/) - 容器化部署
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-⭐ **如果这个项目对你有帮助，请点个 Star 支持一下！**
+## 中文说明
 
-📧 有问题或建议？欢迎提交 [Issue](https://github.com/niuheilong/stock-mcp-server/issues)
+**青龙**：给 AI 助手提供实时 A 股数据的 MCP 服务器。
 
-🐉 **青龙 - 让 AI 更懂中国股市**
+- 实时行情、多股批量快照、日/周/月 K 线（前复权/后复权）、股票搜索、大盘指数
+- 只使用真实上游数据，**不做任何模拟或推算**：取不到数据就报错，不编造
+- 数据源为腾讯财经公开接口，有秒级延迟，仅供研究，不构成投资建议
+
+```bash
+claude mcp add qinglong -- uvx --from git+https://github.com/niuheilong/stock-mcp-server qinglong-mcp
+```
+
+如果这个项目对你有帮助，欢迎点个 Star ⭐
